@@ -1,0 +1,23 @@
+# docker compose --file docker-compose.yml --env-file .env up
+
+version: '3.8'
+
+services:
+  municipia_demo:
+    build:
+      dockerfile: Dockerfile
+    container_name: python-app-crea
+    environment:
+      APP_PORT: ${APP_PORT}
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
+    volumes:
+      - .:/app
+    ports:
+      - ${APP_PORT}:${APP_PORT}
+    command: sh -c "python ."
+    networks:
+      - municipia_network
+
+networks:
+  municipia_network:
+    driver: bridge

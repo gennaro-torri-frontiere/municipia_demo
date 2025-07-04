@@ -2,7 +2,10 @@ import fitz
 import pytesseract
 from io import BytesIO
 from PIL import Image
+from logger import get_logger
 
+
+LOGGER = get_logger()
 
 def extract_text_from_pdf(pdf_binary: BytesIO, dpi=300) -> str:
     """
@@ -18,7 +21,7 @@ def extract_text_from_pdf(pdf_binary: BytesIO, dpi=300) -> str:
         # Open the PDF from binary content
         pdf_document = fitz.open(stream=pdf_binary, filetype="pdf")
         num_pages = len(pdf_document)
-        print("Opened PDF from binary content. found {} pages.".format(num_pages))
+        LOGGER.info("Opened PDF from binary content. found {} pages.".format(num_pages))
 
         text = ""
         for page_num in range(num_pages):
@@ -34,6 +37,6 @@ def extract_text_from_pdf(pdf_binary: BytesIO, dpi=300) -> str:
         pdf_document.close()
 
     except fitz.FileNotFoundError:
-        print("Error: PDF file not found.")
+        LOGGER.info("Error: PDF file not found.")
 
     return text

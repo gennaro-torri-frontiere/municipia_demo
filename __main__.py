@@ -45,7 +45,6 @@ async def durc(durc: UploadFile = File(...)):
 
 if __name__ == "__main__":
     host = "0.0.0.0"
-    # port = int(os.environ.get("APP_PORT"))
-    port = 8000
+    port = int(os.environ.get("APP_PORT"))
     # logger.info(f"Starting Service Image retriever {host}:{port}")
     uvicorn.run(app, host=host, port=port)
