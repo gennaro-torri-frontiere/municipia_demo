@@ -6,7 +6,7 @@ services:
   municipia_demo:
     build:
       dockerfile: Dockerfile
-    container_name: python-app-crea
+    container_name: municipia
     environment:
       APP_PORT: ${APP_PORT}
       OPENAI_API_KEY: ${OPENAI_API_KEY}
