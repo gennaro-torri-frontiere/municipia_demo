@@ -1,0 +1,211 @@
+openapi: 3.1.0
+info:
+  title: FastAPI
+  version: 0.1.0
+paths:
+  /adl:
+    post:
+      summary: Post ADL data
+      description: >
+        Estrae le entita dall'atto di liquidazione
+        le entità sono:
+        - cup: il codice unico di progetto, un codice alfanumerico che identifica un progetto
+        - ragione_sociale_beneficiario: il nome o ragione sociale del beneficiario del pagamento
+        - cf_beneficiario: il codice fiscale del beneficiario del pagamento
+        - fatture: questa è una lista di entità rappresentate da un dict che contiene:
+            - numero: il numero della fattura
+            - importo: l'importo della fattura in euro
+            - data: la data della fattura
+            - cig: il codice identificativo della gara
+      operationId: info_adl_post
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Body_info_adl_post'
+        required: true
+      responses:
+        200:
+          description: Successful response
+          content:
+            application/json:
+              schema: {}
+              example:
+                cup: string
+                ragione_sociale_beneficiario: string
+                cf_beneficiario: '12345678901'
+                fatture:
+                  - numero: string
+                    importo: 0
+                    data: GG/MM/YYYY
+                    cig: string
+                  - numero: string
+                    importo: 0
+                    data: GG/MM/YYYY
+                    cig: string
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              example:
+                error: Invalid input data
+        500:
+          description: Internal Server Error
+          content:
+            application/json:
+              example:
+                error: An unexpected error occurred
+        422:
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /cdp:
+    post:
+      summary: Post CDP data
+      description: >
+        Estrae le entita dall'atto di liquidazione.
+        le entità sono:
+        - cup: il codice unico di progetto, un codice alfanumerico che identifica un progetto
+        - importo_totale: l'importo totale del certificato di pagamento in euro
+        - impresa: il nome dell'impresa beneficiaria del pagamento
+      operationId: info_cdp_post
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Body_info_cdp_post'
+        required: true
+      responses:
+        200:
+          description: Successful response
+          content:
+            application/json:
+              schema: {}
+              example:
+                cup: string
+                importo_totale: 0
+                impresa: string
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              example:
+                error: Invalid input data
+        500:
+          description: Internal Server Error
+          content:
+            application/json:
+              example:
+                error: An unexpected error occurred
+        422:
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /durc:
+    post:
+      summary: Post CDP data
+      description: >
+        Estrae le entita dal durc
+        le entità sono:
+        - scadenza_validità: la data di scadenza della validità del DURC
+        - valid: un booleano che indica se il DURC è valido (scadenza_validità > data corrente)
+      operationId: durc_durc_post
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Body_durc_durc_post'
+        required: true
+      responses:
+        200:
+          description: Successful response
+          content:
+            application/json:
+              schema: {}
+              example:
+                scadenza_validità: GG/MM/YYYY
+                valid: true
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              example:
+                error: Invalid input data
+        500:
+          description: Internal Server Error
+          content:
+            application/json:
+              example:
+                error: An unexpected error occurred
+        422:
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+components:
+  schemas:
+    Body_durc_durc_post:
+      properties:
+        durc:
+          type: string
+          format: binary
+          title: Durc
+      type: object
+      required:
+        - durc
+      title: Body_durc_durc_post
+    Body_info_adl_post:
+      properties:
+        adl:
+          type: string
+          format: binary
+          title: Adl
+      type: object
+      required:
+        - adl
+      title: Body_info_adl_post
+    Body_info_cdp_post:
+      properties:
+        cdp:
+          type: string
+          format: binary
+          title: Cdp
+      type: object
+      required:
+        - cdp
+      title: Body_info_cdp_post
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+              - type: string
+              - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+        - loc
+        - msg
+        - type
+      title: ValidationError

@@ -8,30 +8,30 @@ from fastapi.responses import JSONResponse
 from src.llm import adl_info, cdp_info, durc_info
 from src.ocr import extract_text_from_pdf   
 from src.utils import parse_date
+from doc import ADL_API_DOC, CDP_API_DOC, DUCR_API_DOC
 
 app = FastAPI()
 
 
-@app.post("/info")
-async def info(cdp: UploadFile = File(...), adl: UploadFile = File(...)):
-
-    cdp_byte = await cdp.read()
-    cdp_str = extract_text_from_pdf(BytesIO(cdp_byte))
-    cdp_dict = cdp_info(cdp_str)
+@app.post("/adl", **ADL_API_DOC)
+async def info(adl: UploadFile = File(...)):
 
     adl_byte = await adl.read()
     adl_str = extract_text_from_pdf(BytesIO(adl_byte))
     adl_dict = adl_info(adl_str)
 
-    result = {
-        "atto_liquidazione": adl_dict,
-        "certificato_pagamento": cdp_dict,
-        "match_cup": adl_dict["cup"] == cdp_dict["cup"],
-    }
+    return JSONResponse(content=adl_dict)
 
-    return JSONResponse(content=result)
+@app.post("/cdp", **CDP_API_DOC)
+async def info(cdp: UploadFile = File(...)):
 
-@app.post("/durc")
+    cdp_byte = await cdp.read()
+    cdp_str = extract_text_from_pdf(BytesIO(cdp_byte))
+    cdp_dict = cdp_info(cdp_str)
+
+    return JSONResponse(content=cdp_dict)
+
+@app.post("/durc", **DUCR_API_DOC)
 async def durc(durc: UploadFile = File(...)):
 
     durc_byte = await durc.read()

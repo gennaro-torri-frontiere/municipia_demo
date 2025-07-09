@@ -2,9 +2,12 @@ import json
 import os
 from openai import OpenAI
 from pydantic import BaseModel
+from logger import get_logger
 
+LOGGER = get_logger()
 from dotenv import load_dotenv
 load_dotenv()
+
 
 class FatturaModel(BaseModel):
     numero: str
@@ -23,6 +26,7 @@ class ADLModel(BaseModel):
 class CDPModel(BaseModel):
     cup: str
     importo_totale: float
+    impresa: str
 
 
 class DURCModel(BaseModel):
@@ -55,6 +59,7 @@ def durc_info(text: str) -> dict:
         response_format=DURCModel
     )
     
+    LOGGER.info("DURC info extracted successfully.")
     return json.loads(completion.choices[0].message.content)
 
 def adl_info(text: str) -> dict:
@@ -90,6 +95,7 @@ def adl_info(text: str) -> dict:
         response_format=ADLModel
     )
     
+    LOGGER.info("ADL info extracted successfully.")
     return json.loads(completion.choices[0].message.content)
 
 def cdp_info(text: str) -> dict:
@@ -100,6 +106,7 @@ def cdp_info(text: str) -> dict:
     le entità sono:
     - cup: il codice unico di progetto, un codice alfanumerico che identifica un progetto
     - importo_totale: l'importo totale del certificato di pagamento in euro
+    - impresa: il nome dell'impresa beneficiaria del pagamento
     """
 
     messages = [
@@ -118,4 +125,5 @@ def cdp_info(text: str) -> dict:
         response_format=CDPModel
     )
     
+    LOGGER.info("CDP info extracted successfully.")
     return json.loads(completion.choices[0].message.content)

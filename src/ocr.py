@@ -4,8 +4,8 @@ from io import BytesIO
 from PIL import Image
 from logger import get_logger
 
-
 LOGGER = get_logger()
+
 
 def extract_text_from_pdf(pdf_binary: BytesIO, dpi=300) -> str:
     """
@@ -35,6 +35,7 @@ def extract_text_from_pdf(pdf_binary: BytesIO, dpi=300) -> str:
             text += pytesseract.image_to_string(image)
 
         pdf_document.close()
+        LOGGER.info("text extracted from PDF successfully.")
 
     except fitz.FileNotFoundError:
         LOGGER.info("Error: PDF file not found.")
